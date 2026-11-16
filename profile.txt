@@ -4,21 +4,21 @@
 # Lines starting with # are comments and are ignored.
 # ============================================================
 
-name=Prof. Pin Luarn
+name=Pascale Becker
 
-title1=Top 2% Scientist Worldwide (2020-2026)
+title1=Working at EnBW as a working student as in Process Automation
 
-title2=2024 National Teaching Award Laureate
+title2=Currently finishing my Master at Hochschule Pforzheim
 
-expertise=Internet Marketing, AI Applications, Agentic AI
+expertise=Marketing Intelligence, AI Applications, Data Science
 
-education=Ph.D. in Industrial Engineering, University of Wisconsin-Madison, USA
+education=B. Sc. BWL/Marketing, M. Sc. Marketing Intelligence, Germany/Pforzheim
 
-email=luarn@mail.ntust.edu.tw
-linkedin=https://pse.is/8nn88y
+email=beckerpp@hs-pforzheim.de
+linkedin=linkedin.com/in/pascale-becker-526680387
 
-about1=Prof. Luarn earned his B.S. in Industrial Engineering from Tunghai University,
-about2=and his M.S. and Ph.D. in Industrial Engineering from the University of Wisconsin-Madison.
+about1=Pascale Becker earned her B.Sc. in BWL/Marketing from Hochschule Pforzheim,
+about2=and her M.Sc. in Marketing Intelligence also from Hochschule Pforzheim.
 about3=Named among the world's top 2% scientists by Stanford University & Elsevier for seven consecutive years (2020-2026).
 about4=Recipient of the 2024 Presidential National Teaching Award, Taiwan
 
