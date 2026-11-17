@@ -6,11 +6,11 @@
 
 name=Pascale Becker
 
-title1=Working at EnBW as a working student as Process Automation
+title1=Working Student in Process Automation at EnBW
 
-title2=Currently finishing my Master in Marketing Intelligence at Hochschule Pforzheim
+title2=M.Sc. Student in Marketing Intelligence at Hochschule Pforzheim
 
-expertise=Marketing Intelligence, AI Applications, Data Science
+expertise=Marketing Intelligence, Artificial Intelligence, Data Analytics, Process Automation
 
 education=B. Sc. BWL/Marketing, M. Sc. Marketing Intelligence, Germany/ Hochschule Pforzheim
 
@@ -18,10 +18,10 @@ email=beckerpp@hs-pforzheim.de
 linkedin=linkedin.com/in/pascale-becker-526680387
 
 about1=Pascale Becker earned her B.Sc. in BWL/Marketing from Hochschule Pforzheim,
-about2=and is currently studying on her M.Sc. in Marketing Intelligence also at Hochschule Pforzheim.
-about3=
-about4=
+about2=and is currently pursuing her M.Sc. in Marketing Intelligence at Hochschule Pforzheim.
+about3=She is particularly interested in artificial intelligence, data analytics, and their applications in marketing.
+about4=Outside of her studies, she enjoys traveling, exploring new places, and staying active through running and fitness.
 
-phone=
+phone=+491753210701
 
 location=Hochschule Pforzheim, Germany
