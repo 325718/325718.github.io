@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediaPipe Partikel-Demo</title>
+  <link rel="stylesheet" href="./static/particle-demo/style.css">
+  <script type="module" src="./static/particle-demo/demo.js"></script>
+</head>
+<body>
+  <main>
+    <header><h1>MediaPipe Partikel-Demo</h1><button id="camera-button" disabled>Kamera starten</button></header>
+    <section class="scene" aria-label="Animiertes Partikelherz mit Webcam und Handsteuerung">
+      <canvas id="particles" width="1100" height="680"></canvas>
+      <aside class="status-card">
+        <time id="clock">--:--:--</time>
+        <p id="date"></p>
+        <p id="hand">Keine Hand erkannt</p>
+        <label for="openness">Handöffnung <span id="opening-value">—</span></label>
+        <meter id="openness" min="0" max="1" value="0"></meter>
+        <label for="proximity">Kameranähe <span id="distance">—</span></label>
+        <meter id="proximity" min="0" max="1" value="0"></meter>
+        <p>Form <strong id="shape">Herz</strong> · Farbe <strong id="color">Gold</strong></p>
+        <p class="hint">Faust machen, dann öffnen, um die Form zu wechseln. Näher zur Kamera zieht die Partikel zusammen.</p>
+      </aside>
+      <div class="camera-card">
+        <video id="video" autoplay playsinline muted hidden></video>
+        <canvas id="preview" width="640" height="480" hidden aria-label="Gespiegeltes Webcam-Bild mit Hand- und Gesichtsmarkierungen"></canvas>
+        <p id="camera-hint">Kamera starten und den Zugriff im Browser erlauben.</p>
+      </div>
+    </section>
+    <p id="status" role="status">Bitte über run_particle_demo_html.bat starten, damit Modelle und Kamera geladen werden können.</p>
+    <p id="error" role="alert" hidden></p>
+    <footer>Q oder Esc stoppt die Kamera. Die Hand- und Gesichtserkennung läuft lokal im Browser.</footer>
+  </main>
+</body>
+</html>
