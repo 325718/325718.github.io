@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Seven Ultralytics YOLO26 vision tasks running on your local webcam.">
+  <title>YOLO26 Webcam Studio</title>
+  <link rel="stylesheet" href="/files/webcam/style.css">
+  <script type="module" src="/files/webcam/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">◉</span>YOLO26 Studio</div>
+      <a href="/">Detection workspace</a>
+    </div>
+  </header>
+  <main class="wrap">
+    <div class="intro">
+      <h1>Webcam Studio</h1>
+      <p>See what seven YOLO26 nano models make of the same camera feed.</p>
+    </div>
+    <div class="workspace">
+      <section class="monitor" aria-label="Live preview">
+        <div class="monitor-bar">
+          <dl class="metrics">
+            <div><dt>Current task</dt><dd id="task-metric">Object detection</dd></div>
+            <div><dt>Backend</dt><dd id="backend">WASM (CPU)</dd></div>
+            <div><dt>Inference FPS</dt><dd id="fps">—</dd></div>
+          </dl>
+        </div>
+        <div class="stage">
+          <video id="video" autoplay muted playsinline aria-label="Live webcam video" hidden></video>
+          <canvas id="overlay" aria-hidden="true" hidden></canvas>
+          <div id="empty" class="empty">
+            <span class="camera-mark" aria-hidden="true"></span>
+            <strong>Camera is off</strong>
+            <p>Start your webcam to see predictions here.</p>
+          </div>
+        </div>
+        <div class="monitor-footer">
+          <p id="camera-state">Camera off</p>
+          <p>Frames stay on this device.</p>
+        </div>
+      </section>
+      <aside class="settings" aria-label="Webcam controls">
+        <section class="card">
+          <h2>Camera</h2>
+          <button id="camera" class="primary" type="button">Start webcam</button>
+        </section>
+        <section class="card">
+          <h2>Model</h2>
+          <label for="task">Vision task</label>
+          <select id="task">
+            <option value="detect">Object detection</option>
+            <option value="segment">Instance segmentation</option>
+            <option value="semantic">Semantic segmentation</option>
+            <option value="depth">Depth estimation</option>
+            <option value="classify">Image classification</option>
+            <option value="pose">Pose estimation</option>
+            <option value="obb">Oriented boxes (OBB)</option>
+          </select>
+          <p class="model-name" id="model-name">yolo26n</p>
+          <p class="task-description" id="task-description">Finds and labels objects with bounding boxes.</p>
+          <label class="gpu-option" for="gpu"><input id="gpu" type="checkbox" autocomplete="off"> Use GPU (WebGPU)</label>
+          <p id="model-status" class="model-status" role="status">Preparing the model…</p>
+          <button id="retry" class="retry" type="button" hidden>Retry model</button>
+        </section>
+        <p id="error" class="error" role="alert" hidden></p>
+        <section class="card results" aria-labelledby="results-title" hidden>
+          <h2 id="results-title">Current result</h2>
+          <ul id="results"></ul>
+        </section>
+      </aside>
+    </div>
+    <footer>Ultralytics YOLO26 nano · ONNX Runtime Web · <a href="/files/webcam/README.md">Setup and model notes</a></footer>
+  </main>
+</body>
+</html>
