@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Neural Style Studio</title>
+  <meta name="description" content="Turn your photo into five artistic styles, right in your browser.">
+  <link rel="stylesheet" href="./static/style-transfer/style.css">
+  <script type="module" src="./static/style-transfer/app.js"></script>
+</head>
+<body>
+  <header class="top"><div class="wrap top-inner">
+    <span class="brand"><span aria-hidden="true">✳</span> Neural Style Studio</span>
+    <span class="local-note">Runs on your device</span>
+  </div></header>
+  <main class="wrap">
+    <div class="intro"><h1>Restyle your photo</h1><p>Choose a look or compare all five styles side by side.</p></div>
+    <div class="workspace">
+      <aside>
+        <section class="upload-panel">
+          <h2>Your photo</h2>
+          <button id="dropzone" type="button">
+            <strong>Choose a photo</strong>
+            <span>or drop a JPG, PNG, or WebP</span>
+          </button>
+          <input id="photo" type="file" accept="image/jpeg,image/png,image/webp,image/*" hidden>
+          <button id="sample" class="text-button" type="button">Use sample photo</button>
+          <p id="photo-info" class="muted" hidden></p>
+        </section>
+        <section class="style-panel">
+          <h2 id="styles-title">Styles</h2>
+          <div id="styles" class="style-options" role="group" aria-labelledby="styles-title"></div>
+          <label class="resolution-label" for="resolution">Output size · longest edge</label>
+          <select id="resolution"><option value="256" selected>256 px · Fast</option><option value="384">384 px · Balanced</option><option value="512">512 px · More detail</option></select>
+          <button id="generate" class="primary" type="button" disabled>Convert selected</button>
+          <button id="convert-all" class="secondary" type="button" disabled>Convert all styles</button>
+          <button id="cancel" class="secondary" type="button" hidden>Cancel processing</button>
+        </section>
+      </aside>
+      <section class="gallery-panel" aria-labelledby="gallery-title">
+        <div class="gallery-heading"><h2 id="gallery-title">Style gallery</h2><p id="status" role="status">Choose a photo to begin.</p></div>
+        <p id="error" role="alert" hidden></p>
+        <div id="gallery">
+          <article class="result-card">
+            <div class="result-art"><img class="sample-art" src="./static/backgrounds/moraine-lake.jpg" alt="Mountain peaks above a turquoise lake"></div>
+            <div class="result-info"><div><h3>Sample photo</h3><small>Original</small></div></div>
+          </article>
+          <article class="result-card">
+            <div class="result-art"><img class="sample-art" src="./static/style-transfer/previews/mosaic-9.webp" alt="The same lake rendered in the Mosaic style"></div>
+            <div class="result-info"><div><h3>Mosaic</h3><small>Style preview</small></div></div>
+          </article>
+        </div>
+      </section>
+    </div>
+    <footer>Models are free for personal or research use under their license terms. <a href="./static/style-transfer/README.md">Models and license notes</a></footer>
+  </main>
+</body>
+</html>
