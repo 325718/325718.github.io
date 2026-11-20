@@ -1,0 +1,1303 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CCTV Traffic Intelligence Studio</title>
+<style>
+:root {
+    font-family: Inter, "Segoe UI", sans-serif;
+    color: #e5eaf3;
+    background: #101620;
+    color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+main { max-width: 1800px; min-height: 100vh; margin: auto; }
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 23px;
+    background: #171f2c;
+    border-bottom: 1px solid #334055;
+}
+.brand { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.brand-mark { color: #53b5ff; font-size: 26px; }
+h1 { font-size: 19px; letter-spacing: -0.45px; margin: 0; font-weight: 650; }
+.model-badge {
+    color: #67d5ff;
+    border: 1px solid #21658d;
+    background: #17344a;
+    border-radius: 20px;
+    padding: 4px 9px;
+    font-size: 12px;
+}
+.header-link { color: #b8c9e1; font-size: 14px; text-decoration: none; white-space: nowrap; }
+.workspace {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+.sources { display: flex; flex-direction: column; gap: 18px; }
+.panel {
+    border: 1px solid #344259;
+    border-radius: 11px;
+    background: #1a2536;
+    padding: 18px;
+    box-shadow: 0 8px 18px #00000012;
+}
+h2 { font-size: 15px; font-weight: 650; margin: 0 0 17px; }
+button, input, select { font: inherit; font-size: 14px; }
+button {
+    border: 1px solid #2688f1;
+    border-radius: 6px;
+    background: #2179ed;
+    color: white;
+    padding: 10px 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+button:hover { filter: brightness(1.12); }
+button:disabled { opacity: 0.45; cursor: default; }
+button.secondary { background: #263448; border-color: #3b4c65; color: #dae4f3; }
+.source-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    background: #121d2c;
+    border-radius: 7px;
+    padding: 5px;
+}
+.source-button {
+    border-color: transparent;
+    background: transparent;
+    color: #aebed5;
+    padding: 10px 4px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.source-button.active {
+    border-color: #4299ff;
+    background: #2179ed;
+    color: white;
+    box-shadow: 0 2px 10px #1479ff30;
+}
+.source-panel { margin-top: 17px; }
+.source-panel button, .stop-button { width: 100%; margin-top: 9px; }
+button.primary-action { background: linear-gradient(110deg, #16b9eb, #2677f3); border-color: #2d9bf7; }
+label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 14px;
+    color: #b7c6da;
+    margin: 17px 0 9px;
+}
+output { color: #50c6ff; font-variant-numeric: tabular-nums; }
+input[type=url], select {
+    width: 100%;
+    background: #111d2e;
+    color: #dce6f5;
+    border: 1px solid #3a4b64;
+    border-radius: 5px;
+    padding: 10px;
+}
+input[readonly] { font-size: 12px; color: #acc0da; }
+input[type=range] { width: 100%; accent-color: #2caaf7; }
+.checkbox-label { justify-content: flex-start; gap: 8px; }
+input[type=checkbox] { accent-color: #2caaf7; }
+.help { font-size: 13px; line-height: 1.6; color: #9cafc9; margin: 12px 0 4px; }
+.model-status {
+    color: #64d1d4;
+    font-size: 12px;
+    line-height: 1.5;
+    border-top: 1px solid #35445a;
+    padding-top: 14px;
+    margin: 16px 0 0;
+}
+.monitor { min-width: 0; }
+.monitor-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 2px 0 14px;
+}
+.monitor-heading h2 { font-size: 16px; margin: 0; }
+.monitor-heading p { font-size: 13px; color: #93a8c4; margin: 0; }
+.video-shell {
+    border: 1px solid #34435c;
+    border-radius: 11px;
+    background: #070c13;
+    overflow: hidden;
+    box-shadow: 0 15px 35px #00000025;
+}
+.monitor-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 11px 13px;
+    background: #0b121c;
+    border-bottom: 1px solid #2d3d53;
+}
+.performance, .monitor-actions { display: flex; align-items: center; gap: 7px; }
+.metric {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 10px;
+    border: 1px solid #253449;
+    border-radius: 5px;
+    background: #151f2c;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+.metric span { color: #92a9c5; }
+.metric strong { color: #55d1fa; font-size: 14px; font-weight: 600; }
+.monitor-actions button { font-size: 13px; padding: 8px 11px; }
+.stage { position: relative; aspect-ratio: 16 / 9; min-height: 250px; background: #05090f; }
+.stage:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; }
+.stage.expanded {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    aspect-ratio: auto;
+}
+#exit-fullscreen {
+    position: absolute;
+    z-index: 1;
+    right: 15px;
+    top: 15px;
+}
+canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+#empty { position: absolute; inset: 40% 20px auto; color: #91a4bd; text-align: center; }
+.toolbar, #playback { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 13px; }
+#seek { flex: 1; min-width: 100px; }
+#position, #frame-time { color: #9db0cb; font-size: 13px; font-variant-numeric: tabular-nums; }
+#frame-time { margin-left: auto; }
+#error { background: #39232c; color: #ffc0b6; border: 1px solid #85505c; padding: 12px; border-radius: 6px; font-size: 14px; line-height: 1.5; }
+.results-heading { margin-top: 24px; }
+.results-heading h2 { color: #afc0d6; margin-bottom: 12px; }
+#detections { list-style: none; display: flex; flex-wrap: wrap; gap: 9px; padding: 0; margin: 0; }
+#detections li { padding: 8px 12px; border-radius: 5px; background: #1a273a; font-size: 14px; border-left: 3px solid var(--color, #3b5272); }
+#detections li.muted { background: transparent; border: 0; color: #8e9dac; padding-left: 0; }
+footer { color: #7187a4; font-size: 12px; border-top: 1px solid #29374b; margin: 3px 20px 0; padding: 15px 0; }
+footer a { color: #a4bfdf; }
+:focus-visible { outline: 2px solid #67d5ff; outline-offset: 3px; }
+@media (max-width: 900px) {
+    .workspace { grid-template-columns: 260px minmax(0, 1fr); gap: 14px; padding: 14px; }
+    .panel { padding: 13px; }
+    .performance { flex-wrap: wrap; }
+}
+@media (max-width: 650px) {
+    .workspace { grid-template-columns: 1fr; }
+    header { padding: 13px; }
+    h1 { font-size: 16px; }
+    .stage { min-height: 200px; }
+}
+
+.workspace {
+    grid-template-columns: 310px minmax(0, 1fr);
+}
+
+.panel > button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.camera-card {
+    background: #111d2e;
+    border: 1px solid #34445c;
+    border-left: 3px solid #2eacff;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 5px;
+}
+
+.camera-card strong, .camera-card span {
+    display: block;
+    font-size: 13px;
+}
+
+.camera-card span {
+    color: #93accb;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.statistics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid #35465f;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    background: #1a2536;
+}
+
+.stat {
+    padding: 19px 15px;
+    border-right: 1px solid #35465f;
+}
+
+.stat:last-child {
+    border-right: 0;
+}
+
+.stat h2 {
+    color: #9eb4d1;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+    min-height: 36px;
+    margin: 0 0 8px;
+}
+
+.stat strong {
+    font-size: 34px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat p {
+    color: #8fa6c5;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 8px 0 0;
+}
+
+.stat.total strong {
+    color: #57c5ff;
+}
+
+.stat.incoming strong {
+    color: #3de0b7;
+}
+
+.stat.outgoing strong {
+    color: #ffbf51;
+}
+
+.stat.speed strong, .stat.speed > span {
+    color: #b396ff;
+}
+
+.stat.speed > span {
+    font-size: 13px;
+}
+
+.monitor-bar {
+    gap: 10px;
+}
+
+.performance {
+    flex-wrap: wrap;
+}
+
+.metric {
+    padding: 7px 8px;
+}
+
+.heat-legend {
+    display: flex;
+    justify-content: space-between;
+    margin: 12px 0 7px;
+    font-size: 12px;
+    color: #a7bad4;
+}
+
+.heat-gradient {
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #2233ff, #00dbff, #eaff00, #ff2200);
+}
+
+.traffic-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 15px 0 24px;
+    color: #abc0dd;
+    font-size: 13px;
+}
+
+.traffic-summary p {
+    margin: 0;
+}
+
+#updated {
+    color: #7f99bb;
+    font-size: 12px;
+}
+
+.event-section {
+    border: 1px solid #33445d;
+    border-radius: 8px;
+    background: #162131;
+    overflow: hidden;
+}
+
+.event-section h2 {
+    padding: 15px;
+    margin: 0;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: left;
+    font-size: 13px;
+}
+
+th, td {
+    padding: 12px 15px;
+    border-top: 1px solid #2c3c53;
+    white-space: nowrap;
+}
+
+th {
+    color: #92afd0;
+    font-weight: 500;
+    background: #111c2c;
+}
+
+@media (max-width: 1100px) {
+    .workspace {
+        grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .statistics {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stat {
+        border-bottom: 1px solid #35465f;
+    }
+
+    .stat h2 {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 700px) {
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .sources {
+        order: 2;
+    }
+
+    .monitor {
+        order: 1;
+    }
+
+    .stat strong {
+        font-size: 27px;
+    }
+}
+
+</style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">◈</span><h1>CCTV Traffic Intelligence Studio</h1><span class="model-badge">YOLO26n · Tracking</span></div>
+      <a href="#help" class="header-link" >Bedienung & Kalibrierung</a>
+    </header>
+    <div class="workspace">
+      <aside class="sources">
+        <section class="panel">
+          <h2>CCTV Feed Source</h2>
+          <label for="camera-url">Live-Kamera</label>
+          <input id="camera-url" type="url" value="https://cctv.klcg.gov.tw/facd4662" readonly>
+          <div class="camera-card"><strong>Keelung · facd4662</strong><span>Öffentliche Straßenkamera</span></div>
+          <button id="connect" class="primary-action">Feed verbinden</button>
+          <button id="disconnect" class="secondary" disabled>Verbindung trennen</button>
+          <p id="status" class="help" role="status">Modell wird geladen…</p>
+        </section>
+        <section class="panel">
+          <h2>Zähllinie & Geometrie</h2>
+          <label for="line">Linienposition · Y <output id="line-value">0.55</output></label>
+          <input id="line" type="range" min="0.10" max="0.90" step="0.01" value="0.55">
+          <label for="scale">Meter pro Pixel <output id="scale-value">0.060</output></label>
+          <input id="scale" type="range" min="0.005" max="0.250" step="0.005" value="0.060">
+          <p class="help">An einer bekannten Strecke im Straßenbild kalibrieren. Geschwindigkeit ist eine Schätzung.</p>
+          <label for="limit">Tempolimit für Markierung <output id="limit-value">40 km/h</output></label>
+          <input id="limit" type="range" min="10" max="120" step="5" value="40">
+          <p id="dimensions" class="help">Kalibrierung bezieht sich auf das analysierte Bild.</p>
+        </section>
+        <section class="panel">
+          <h2>Verkehrsdichte-Heatmap</h2>
+          <label class="checkbox-label"><input id="heat-enabled" type="checkbox" checked> Heatmap einblenden</label>
+          <label for="opacity">Deckkraft <output id="opacity-value">55%</output></label>
+          <input id="opacity" type="range" min="0.10" max="0.90" step="0.05" value="0.55">
+          <div class="heat-legend"><span>Geringe Dichte</span><span>Hohe Dichte</span></div>
+          <div class="heat-gradient" aria-hidden="true"></div>
+          <p class="help">Fahrzeugpositionen sammeln sich; ältere Werte verblassen.</p>
+        </section>
+        <section class="panel">
+          <h2>Erkennung & Sitzung</h2>
+          <label for="confidence">Confidence <output id="confidence-value">0.35</output></label>
+          <input id="confidence" type="range" min="0.20" max="0.80" step="0.05" value="0.35">
+          <button id="reset" class="secondary">Zählung & Heatmap zurücksetzen</button>
+          <p class="help">Ein Fahrzeug zählt einmal, wenn es die Linie überquert. Abwärts und aufwärts beziehen sich auf das Kamerabild.</p>
+        </section>
+      </aside>
+      <section class="monitor">
+        <div class="statistics" aria-live="polite">
+          <article class="stat total"><h2>FAHRZEUGE GEZÄHLT</h2><strong id="total">0</strong><p>Eindeutige Linienüberquerungen</p></article>
+          <article class="stat incoming"><h2>ABWÄRTS / EIN</h2><strong id="down">0</strong><p>Über die Linie nach unten</p></article>
+          <article class="stat outgoing"><h2>AUFWÄRTS / AUS</h2><strong id="up">0</strong><p>Über die Linie nach oben</p></article>
+          <article class="stat speed"><h2>Ø GESCHWINDIGKEIT</h2><strong id="average">—</strong><span> km/h</span><p>Geschätzt · aktuell fahrende Fahrzeuge</p></article>
+        </div>
+        <div class="video-shell">
+          <div class="monitor-bar">
+            <div class="performance">
+              <div class="metric"><span>LIVE CCTV</span><strong id="connection">Offline</strong></div>
+              <div class="metric"><span>AKTIV</span><strong id="active">0</strong></div>
+              <div class="metric"><span>FPS</span><strong id="fps">—</strong></div>
+              <div class="metric"><span>Latenz</span><strong id="latency">— ms</strong></div>
+            </div>
+            <div class="monitor-actions">
+              <button id="snapshot" class="secondary" disabled>Snapshot</button>
+              <button id="csv" class="secondary">Export CSV</button>
+              <button id="fullscreen" class="secondary">Vollbild</button>
+            </div>
+          </div>
+          <div id="stage" class="stage">
+            <canvas id="output" width="800" height="450" aria-label="CCTV mit Fahrzeug-IDs, Zähllinie, Heatmap und geschätzten Geschwindigkeiten"></canvas>
+            <p id="empty">Live-CCTV wird beim Start verbunden.</p>
+            <button id="exit-fullscreen" class="secondary" hidden>Vollbild beenden</button>
+          </div>
+        </div>
+        <img id="feed" alt="" hidden>
+        <p id="error" role="alert" hidden></p>
+        <div class="traffic-summary"><p id="class-summary">Auto 0 · Motorrad 0 · Bus 0 · Lkw 0</p><span id="updated">Noch keine Analyse</span></div>
+        <section class="event-section">
+          <h2>Letzte Linienüberquerungen</h2>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Zeit</th><th>Fahrzeug</th><th>Track-ID</th><th>Richtung</th><th>Geschätzt</th></tr></thead>
+              <tbody id="events"><tr><td colspan="5">Noch keine Überquerung erkannt.</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </div>
+    <footer>YOLO26n · Lokale Browser-Analyse · Geschwindigkeit abhängig von Kalibrierung und Kameraperspektive</footer>
+  
+<details id="help" style="margin:20px;padding:18px;border:1px solid #34445c;border-radius:8px">
+<summary>Bedienung & Kalibrierung</summary>
+<p>Diese einzelne HTML-Datei in Chrome oder Edge öffnen. Eine Internetverbindung lädt ONNX Runtime, YOLO26n und das Live-CCTV-Bild. Die Analyse läuft lokal im Browser.</p>
+<p>Die Zähllinie zählt jede verfolgte Fahrzeug-ID einmal. Ein und Aus beziehen sich auf die Bildrichtung. Der Tracker kann kurze Lücken überbrücken; Verdeckungen und verlorene IDs können die Zählung beeinflussen.</p>
+<p>Für die Geschwindigkeit eine bekannte Straßenstrecke in Metern durch ihre Länge in analysierten Bildpixeln teilen und den Regler „Meter pro Pixel“ darauf einstellen. Der Startwert 0,060 ist ein Beispielwert. Kameraperspektive und Erkennung beeinflussen die Schätzung.</p>
+<p>Die Heatmap sammelt Fahrzeugpositionen und blendet ältere Werte aus. CSV exportiert die Linienüberquerungen; Snapshot speichert die Vorschau. Eine neue Verbindung oder Zurücksetzen beginnt eine neue Sitzung.</p>
+<p>Modellquelle <a href="https://huggingface.co/onnx-community/yolo26n-ONNX/tree/a8dc7e14743e1cea8ccd493bd99b4c2827de1acf" target="_blank" rel="noopener">YOLO26n ONNX</a> · <a href="https://github.com/ultralytics/ultralytics/blob/main/LICENSE" target="_blank" rel="noopener">Ultralytics-Lizenz</a> · <a href="https://github.com/microsoft/onnxruntime/blob/v1.22.0/LICENSE" target="_blank" rel="noopener">ONNX Runtime MIT-Lizenz</a></p>
+</details>
+
+</main>
+<script id="worker-code" type="text/plain">
+function letterbox(width, height, size = 640) {
+    const ratio = Math.min(size / width, size / height);
+    const scaledWidth = Math.round(width * ratio);
+    const scaledHeight = Math.round(height * ratio);
+    return {
+        size, width, height, scaledWidth, scaledHeight,
+        scaleX: scaledWidth / width,
+        scaleY: scaledHeight / height,
+        left: Math.floor((size - scaledWidth) / 2),
+        top: Math.floor((size - scaledHeight) / 2),
+    };
+}
+
+function overlap(a, b) {
+    const width = Math.max(0, Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1));
+    const height = Math.max(0, Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1));
+    const intersection = width * height;
+    const union = (a.x2 - a.x1) * (a.y2 - a.y1) + (b.x2 - b.x1) * (b.y2 - b.y1) - intersection;
+    return union > 0 ? intersection / union : 0;
+}
+
+function decode(data, dimensions, geometry, threshold) {
+    const boxes = [];
+    const [, axis1, axis2] = dimensions;
+    const endToEnd = axis2 === 6;
+    const channelsFirst = axis1 === 84;
+    const rows = endToEnd ? axis1 : channelsFirst ? axis2 : axis1;
+    if (!endToEnd && axis1 !== 84 && axis2 !== 84) {
+        throw new Error("Unsupported YOLO output shape: " + dimensions.join(" × "));
+    }
+
+    function addBox(x1, y1, x2, y2, score, classId) {
+        if (!Number.isFinite(score) || score < threshold || !Number.isInteger(classId) || classId < 0 || classId >= 80) return;
+        const box = {
+            x1: Math.max(0, Math.min(geometry.width, (x1 - geometry.left) / geometry.scaleX)),
+            y1: Math.max(0, Math.min(geometry.height, (y1 - geometry.top) / geometry.scaleY)),
+            x2: Math.max(0, Math.min(geometry.width, (x2 - geometry.left) / geometry.scaleX)),
+            y2: Math.max(0, Math.min(geometry.height, (y2 - geometry.top) / geometry.scaleY)),
+            score, classId,
+        };
+        if ([box.x1, box.y1, box.x2, box.y2].every(Number.isFinite) && box.x2 > box.x1 && box.y2 > box.y1) boxes.push(box);
+    }
+
+    for (let row = 0; row < rows; row++) {
+        if (endToEnd) {
+            const offset = row * 6;
+            addBox(...data.subarray(offset, offset + 6));
+        } else {
+            const value = channel => data[channelsFirst ? channel * rows + row : row * 84 + channel];
+            let classId = 0;
+            let score = value(4);
+            for (let category = 1; category < 80; category++) {
+                if (value(category + 4) > score) {
+                    classId = category;
+                    score = value(category + 4);
+                }
+            }
+            if (score < threshold) continue;
+            const [cx, cy, width, height] = [value(0), value(1), value(2), value(3)];
+            addBox(cx - width / 2, cy - height / 2, cx + width / 2, cy + height / 2, score, classId);
+        }
+    }
+    boxes.sort((a, b) => b.score - a.score);
+    if (endToEnd) return boxes.slice(0, 300);
+    const retained = [];
+    for (const box of boxes.slice(0, 1500)) {
+        if (!retained.some(other => other.classId === box.classId && overlap(box, other) > 0.45)) retained.push(box);
+        if (retained.length >= 300) break;
+    }
+    return retained;
+}
+
+importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.js");
+
+let session;
+ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/";
+ort.env.wasm.numThreads = 1;
+
+self.onmessage = async ({ data }) => {
+    try {
+        if (data.type === "load") {
+            session = await ort.InferenceSession.create("https://huggingface.co/onnx-community/yolo26n-ONNX/resolve/a8dc7e14743e1cea8ccd493bd99b4c2827de1acf/onnx/model.onnx", {
+                executionProviders: ["wasm"],
+            });
+            self.postMessage({ type: "ready" });
+            return;
+        }
+        const started = performance.now();
+        const input = new ort.Tensor("float32", data.pixels, [1, 3, 640, 640]);
+        let outputs;
+        try {
+            outputs = await session.run({ [session.inputNames[0]]: input });
+            let output = outputs[session.outputNames[0]];
+            if (outputs.logits && outputs.pred_boxes) {
+                // This pinned export exposes raw class logits and normalized cxcywh.
+                const logits = outputs.logits.data;
+                const coordinates = outputs.pred_boxes.data;
+                const count = outputs.logits.dims[1];
+                const rows = new Float32Array(count * 6);
+                for (let index = 0; index < count; index++) {
+                    let classId = 0;
+                    for (let category = 1; category < 80; category++) {
+                        if (logits[index * 80 + category] > logits[index * 80 + classId]) classId = category;
+                    }
+                    const cx = coordinates[index * 4] * 640;
+                    const cy = coordinates[index * 4 + 1] * 640;
+                    const width = coordinates[index * 4 + 2] * 640;
+                    const height = coordinates[index * 4 + 3] * 640;
+                    rows.set([cx - width / 2, cy - height / 2, cx + width / 2,
+                              cy + height / 2, 1 / (1 + Math.exp(-logits[index * 80 + classId])), classId], index * 6);
+                }
+                output = { data: rows, dims: [1, count, 6] };
+            }
+            const boxes = decode(output.data, output.dims, data.geometry, data.threshold);
+            self.postMessage({
+                type: "result", id: data.id, boxes, milliseconds: performance.now() - started,
+                outputShape: output.dims,
+            });
+        } finally {
+            input.dispose();
+            if (outputs) Object.values(outputs).forEach(output => output.dispose());
+        }
+    } catch (error) {
+        self.postMessage({ type: "error", id: data.id, message: String(error.message || error) });
+    }
+};
+
+</script>
+<script>
+function letterbox(width, height, size = 640) {
+    const ratio = Math.min(size / width, size / height);
+    const scaledWidth = Math.round(width * ratio);
+    const scaledHeight = Math.round(height * ratio);
+    return {
+        size, width, height, scaledWidth, scaledHeight,
+        scaleX: scaledWidth / width,
+        scaleY: scaledHeight / height,
+        left: Math.floor((size - scaledWidth) / 2),
+        top: Math.floor((size - scaledHeight) / 2),
+    };
+}
+
+function overlap(a, b) {
+    const width = Math.max(0, Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1));
+    const height = Math.max(0, Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1));
+    const intersection = width * height;
+    const union = (a.x2 - a.x1) * (a.y2 - a.y1) + (b.x2 - b.x1) * (b.y2 - b.y1) - intersection;
+    return union > 0 ? intersection / union : 0;
+}
+
+function decode(data, dimensions, geometry, threshold) {
+    const boxes = [];
+    const [, axis1, axis2] = dimensions;
+    const endToEnd = axis2 === 6;
+    const channelsFirst = axis1 === 84;
+    const rows = endToEnd ? axis1 : channelsFirst ? axis2 : axis1;
+    if (!endToEnd && axis1 !== 84 && axis2 !== 84) {
+        throw new Error("Unsupported YOLO output shape: " + dimensions.join(" × "));
+    }
+
+    function addBox(x1, y1, x2, y2, score, classId) {
+        if (!Number.isFinite(score) || score < threshold || !Number.isInteger(classId) || classId < 0 || classId >= 80) return;
+        const box = {
+            x1: Math.max(0, Math.min(geometry.width, (x1 - geometry.left) / geometry.scaleX)),
+            y1: Math.max(0, Math.min(geometry.height, (y1 - geometry.top) / geometry.scaleY)),
+            x2: Math.max(0, Math.min(geometry.width, (x2 - geometry.left) / geometry.scaleX)),
+            y2: Math.max(0, Math.min(geometry.height, (y2 - geometry.top) / geometry.scaleY)),
+            score, classId,
+        };
+        if ([box.x1, box.y1, box.x2, box.y2].every(Number.isFinite) && box.x2 > box.x1 && box.y2 > box.y1) boxes.push(box);
+    }
+
+    for (let row = 0; row < rows; row++) {
+        if (endToEnd) {
+            const offset = row * 6;
+            addBox(...data.subarray(offset, offset + 6));
+        } else {
+            const value = channel => data[channelsFirst ? channel * rows + row : row * 84 + channel];
+            let classId = 0;
+            let score = value(4);
+            for (let category = 1; category < 80; category++) {
+                if (value(category + 4) > score) {
+                    classId = category;
+                    score = value(category + 4);
+                }
+            }
+            if (score < threshold) continue;
+            const [cx, cy, width, height] = [value(0), value(1), value(2), value(3)];
+            addBox(cx - width / 2, cy - height / 2, cx + width / 2, cy + height / 2, score, classId);
+        }
+    }
+    boxes.sort((a, b) => b.score - a.score);
+    if (endToEnd) return boxes.slice(0, 300);
+    const retained = [];
+    for (const box of boxes.slice(0, 1500)) {
+        if (!retained.some(other => other.classId === box.classId && overlap(box, other) > 0.45)) retained.push(box);
+        if (retained.length >= 300) break;
+    }
+    return retained;
+}
+
+const VEHICLES = { 2: "Auto", 3: "Motorrad", 5: "Bus", 7: "Lkw" };
+
+function groundPoint(box) {
+    return { x: (box.x1 + box.x2) / 2, y: box.y2 };
+}
+
+function iou(a, b) {
+    const intersection = Math.max(0, Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1)) *
+        Math.max(0, Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1));
+    const union = (a.x2 - a.x1) * (a.y2 - a.y1) + (b.x2 - b.x1) * (b.y2 - b.y1) - intersection;
+    return union > 0 ? intersection / union : 0;
+}
+
+// Minimum-cost one-to-one assignment, with extra columns for unmatched tracks.
+function assign(costs) {
+    const rows = costs.length;
+    if (!rows) return [];
+    const columns = costs[0].length;
+    const u = Array(rows + 1).fill(0);
+    const v = Array(columns + 1).fill(0);
+    const owner = Array(columns + 1).fill(0);
+    const previous = Array(columns + 1).fill(0);
+    for (let row = 1; row <= rows; row++) {
+        owner[0] = row;
+        let column = 0;
+        const minimum = Array(columns + 1).fill(Infinity);
+        const used = Array(columns + 1).fill(false);
+        do {
+            used[column] = true;
+            const currentRow = owner[column];
+            let delta = Infinity;
+            let nextColumn = 0;
+            for (let candidate = 1; candidate <= columns; candidate++) {
+                if (used[candidate]) continue;
+                const cost = costs[currentRow - 1][candidate - 1] - u[currentRow] - v[candidate];
+                if (cost < minimum[candidate]) {
+                    minimum[candidate] = cost;
+                    previous[candidate] = column;
+                }
+                if (minimum[candidate] < delta) {
+                    delta = minimum[candidate];
+                    nextColumn = candidate;
+                }
+            }
+            for (let candidate = 0; candidate <= columns; candidate++) {
+                if (used[candidate]) {
+                    u[owner[candidate]] += delta;
+                    v[candidate] -= delta;
+                } else {
+                    minimum[candidate] -= delta;
+                }
+            }
+            column = nextColumn;
+        } while (owner[column] !== 0);
+        do {
+            const next = previous[column];
+            owner[column] = owner[next];
+            column = next;
+        } while (column !== 0);
+    }
+    const result = [];
+    for (let column = 1; column <= columns; column++) {
+        if (owner[column]) result.push([owner[column] - 1, column - 1]);
+    }
+    return result;
+}
+
+function associationCost(track, detection, time) {
+    const dt = Math.max(0, time - track.lastTime);
+    const dx = track.vx * dt;
+    const dy = track.vy * dt;
+    const predicted = {
+        x1: track.box.x1 + dx, x2: track.box.x2 + dx,
+        y1: track.box.y1 + dy, y2: track.box.y2 + dy,
+    };
+    const expected = groundPoint(predicted);
+    const point = groundPoint(detection);
+    const scale = Math.max(30, Math.hypot(track.box.x2 - track.box.x1, track.box.y2 - track.box.y1));
+    const distance = Math.hypot(point.x - expected.x, point.y - expected.y) / scale;
+    const overlap = iou(predicted, detection);
+    if (distance > 1.6 || overlap < 0.01 && distance > 0.8) return 100;
+    const classPenalty = track.classId === detection.classId ? 0 : 0.25;
+    return distance * 0.6 + (1 - overlap) * 0.4 + classPenalty;
+}
+
+class TrafficTracker {
+    constructor({ width, height, line = 0.55, metresPerPixel = 0.06, confidence = 0.35 }) {
+        this.width = width;
+        this.height = height;
+        this.line = line;
+        this.metresPerPixel = metresPerPixel;
+        this.confidence = confidence;
+        this.tracks = [];
+        this.events = [];
+        this.nextId = 1;
+        this.down = 0;
+        this.up = 0;
+        this.byClass = {};
+    }
+
+    side(y) {
+        const difference = y - this.height * this.line;
+        return Math.abs(difference) > Math.max(3, this.height * 0.012) ? Math.sign(difference) : 0;
+    }
+
+    setLine(line) {
+        this.line = line;
+        for (const track of this.tracks) track.side = this.side(track.point.y);
+    }
+
+    speed(track) {
+        const history = track.history;
+        const first = history[0];
+        const last = history[history.length - 1];
+        const seconds = last.time - first.time;
+        const distance = Math.hypot(last.x - first.x, last.y - first.y);
+        if (seconds < 0.5 || history.length < 3) return null;
+        if (distance < 3) return 0;
+        const speed = distance / seconds * this.metresPerPixel * 3.6;
+        return speed <= 180 ? speed : null;
+    }
+
+    update(detections, time, wallTime = new Date().toISOString()) {
+        const vehicles = detections.filter(box => Object.hasOwn(VEHICLES, box.classId));
+        const high = vehicles.filter(box => box.score >= this.confidence);
+        const low = vehicles.filter(box => box.score >= 0.1 && box.score < this.confidence);
+        this.tracks = this.tracks.filter(track => time - track.lastTime <= 2.5);
+        const matches = new Map();
+        const usedHigh = new Set();
+
+        const match = (tracks, boxes, highConfidence) => {
+            if (!tracks.length || !boxes.length) return;
+            const costs = tracks.map(track => [
+                ...boxes.map(box => associationCost(track, box, time)),
+                ...tracks.map(() => 1.15),
+            ]);
+            for (const [row, column] of assign(costs)) {
+                if (column >= boxes.length || costs[row][column] >= 1.15) continue;
+                matches.set(tracks[row], boxes[column]);
+                if (highConfidence) usedHigh.add(column);
+            }
+        };
+        match(this.tracks, high, true);
+        match(this.tracks.filter(track => !matches.has(track) && track.hits >= 2), low, false);
+
+        for (const track of this.tracks) {
+            const box = matches.get(track);
+            if (!box) continue;
+            const point = groundPoint(box);
+            const dt = time - track.lastTime;
+            if (dt <= 0) continue;
+            track.vx = track.vx * 0.3 + (point.x - track.point.x) / dt * 0.7;
+            track.vy = track.vy * 0.3 + (point.y - track.point.y) / dt * 0.7;
+            track.box = box;
+            track.point = point;
+            track.lastTime = time;
+            track.hits++;
+            track.classVotes.set(box.classId, (track.classVotes.get(box.classId) || 0) + box.score);
+            track.classId = [...track.classVotes].sort((a, b) => b[1] - a[1])[0][0];
+            track.history.push({ ...point, time });
+            track.history = track.history.filter(sample => time - sample.time <= 2);
+            const side = this.side(point.y);
+            if (side && track.side && side !== track.side && !track.counted) {
+                track.counted = true;
+                const direction = side > 0 ? "down" : "up";
+                this[direction]++;
+                this.byClass[track.classId] = (this.byClass[track.classId] || 0) + 1;
+                this.events.push({
+                    timestamp: wallTime, elapsedSeconds: time, trackId: track.id,
+                    vehicle: VEHICLES[track.classId], direction, estimatedKmh: this.speed(track),
+                    metresPerPixel: this.metresPerPixel, lineY: this.line,
+                });
+            }
+            if (side) track.side = side;
+        }
+
+        high.forEach((box, index) => {
+            if (usedHigh.has(index)) return;
+            const point = groundPoint(box);
+            this.tracks.push({
+                id: this.nextId++, box, point, classId: box.classId,
+                classVotes: new Map([[box.classId, box.score]]),
+                vx: 0, vy: 0, lastTime: time, hits: 1, counted: false,
+                side: this.side(point.y), history: [{ ...point, time }],
+            });
+        });
+        return this.tracks.filter(track => track.lastTime === time && track.hits >= 2);
+    }
+}
+
+class DensityHeatmap {
+    constructor() {
+        this.width = 160;
+        this.height = 90;
+        this.values = new Float32Array(this.width * this.height);
+        this.lastTime = null;
+        this.canvas = document.createElement("canvas");
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+        this.context = this.canvas.getContext("2d");
+    }
+
+    update(tracks, time, frameWidth, frameHeight) {
+        const dt = this.lastTime === null ? 0.2 : Math.max(0, time - this.lastTime);
+        this.lastTime = time;
+        const decay = Math.exp(-Math.LN2 * dt / 45);
+        for (let index = 0; index < this.values.length; index++) this.values[index] *= decay;
+        for (const track of tracks) {
+            const x = Math.round(track.point.x / frameWidth * (this.width - 1));
+            const y = Math.round(track.point.y / frameHeight * (this.height - 1));
+            for (let dy = -6; dy <= 6; dy++) {
+                for (let dx = -6; dx <= 6; dx++) {
+                    const px = x + dx;
+                    const py = y + dy;
+                    if (px < 0 || py < 0 || px >= this.width || py >= this.height) continue;
+                    this.values[py * this.width + px] += Math.exp(-(dx * dx + dy * dy) / 15) * Math.min(dt, 0.8);
+                }
+            }
+        }
+    }
+
+    draw(context, width, height, opacity) {
+        const maximum = Math.max(1, ...this.values);
+        const image = this.context.createImageData(this.width, this.height);
+        for (let index = 0; index < this.values.length; index++) {
+            const intensity = this.values[index] / maximum;
+            if (intensity < 0.015) continue;
+            const value = intensity * 4;
+            image.data[index * 4] = Math.round(255 * Math.max(0, Math.min(1, value - 1)));
+            image.data[index * 4 + 1] = Math.round(255 * Math.max(0, Math.min(value, 1, 4 - value)));
+            image.data[index * 4 + 2] = Math.round(255 * Math.max(0, Math.min(1, 2 - value)));
+            image.data[index * 4 + 3] = Math.round(255 * opacity * Math.min(1, intensity * 4));
+        }
+        this.context.putImageData(image, 0, 0);
+        context.drawImage(this.canvas, 0, 0, width, height);
+    }
+}
+
+
+const $ = id => document.getElementById(id);
+const feed = $("feed");
+const output = $("output");
+const context = output.getContext("2d");
+const frame = document.createElement("canvas");
+const frameContext = frame.getContext("2d");
+const input = document.createElement("canvas");
+input.width = input.height = 640;
+const inputContext = input.getContext("2d", { willReadFrequently: true });
+const workerUrl = URL.createObjectURL(new Blob([document.getElementById("worker-code").textContent], { type: "application/javascript" }));
+const worker = new Worker(workerUrl);
+let ready = false;
+let connected = false;
+let sourceId = 0;
+let epoch = 0;
+let busy = false;
+let timer;
+let connectTimeout;
+let tracker = null;
+let heatmap = new DensityHeatmap();
+let activeTracks = [];
+let lastResult = null;
+let lastAnalysis = 0;
+let sessionStart = performance.now();
+let pendingTime = 0;
+
+function showError(message = "") {
+    $("error").textContent = message;
+    $("error").hidden = !message;
+}
+
+function createTracker() {
+    return new TrafficTracker({
+        width: frame.width, height: frame.height,
+        line: Number($("line").value),
+        metresPerPixel: Number($("scale").value),
+        confidence: Number($("confidence").value),
+    });
+}
+
+function resetSession() {
+    epoch++;
+    sessionStart = performance.now();
+    tracker = frame.width && frame.height ? createTracker() : null;
+    heatmap = new DensityHeatmap();
+    activeTracks = [];
+    lastResult = null;
+    $("fps").textContent = "—";
+    updateMetrics();
+    if (frame.width && frame.height) render();
+}
+
+function disconnect() {
+    sourceId++;
+    epoch++;
+    connected = false;
+    clearTimeout(timer);
+    clearTimeout(connectTimeout);
+    feed.onload = feed.onerror = null;
+    feed.removeAttribute("src");
+    $("connect").disabled = false;
+    $("disconnect").disabled = true;
+    $("connection").textContent = "Offline";
+    $("status").textContent = "Verbindung getrennt.";
+    $("fps").textContent = "—";
+    activeTracks = [];
+    if (tracker) tracker.tracks = [];
+    updateMetrics();
+}
+
+function connect() {
+    disconnect();
+    resetSession();
+    showError();
+    $("connect").disabled = true;
+    $("disconnect").disabled = false;
+    $("status").textContent = "CCTV-Stream wird verbunden…";
+    $("connection").textContent = "Verbinden…";
+    const id = sourceId;
+    const activateFeed = () => {
+        if (id !== sourceId || connected) return;
+        connected = true;
+        clearTimeout(connectTimeout);
+        $("connection").textContent = "Live";
+        $("status").textContent = ready ? "Live-Analyse läuft." : "Livebild bereit · Modell lädt…";
+        $("empty").hidden = true;
+        tick();
+    };
+    feed.onload = activateFeed;
+    const waitForFirstFrame = () => {
+        if (id !== sourceId || connected) return;
+        if (feed.naturalWidth && feed.naturalHeight) activateFeed();
+        else setTimeout(waitForFirstFrame, 100);
+    };
+    waitForFirstFrame();
+    feed.onerror = () => {
+        if (id !== sourceId) return;
+        disconnect();
+        showError("Der CCTV-Stream ist nicht erreichbar. Bitte erneut verbinden.");
+    };
+    connectTimeout = setTimeout(() => {
+        if (id !== sourceId) return;
+        disconnect();
+        showError("Die Kamera hat innerhalb von 20 Sekunden kein Bild geliefert. Bitte erneut verbinden.");
+    }, 20000);
+    feed.crossOrigin = "anonymous";
+    feed.src = "https://cctv.klcg.gov.tw/facd4662?session=" + Date.now();
+}
+
+function tick() {
+    if (!connected) return;
+    clearTimeout(timer);
+    if (!busy && feed.naturalWidth && feed.naturalHeight) {
+        try {
+            const ratio = Math.min(1, 1280 / feed.naturalWidth);
+            const width = Math.round(feed.naturalWidth * ratio);
+            const height = Math.round(feed.naturalHeight * ratio);
+            if (frame.width !== width || frame.height !== height) {
+                frame.width = output.width = width;
+                frame.height = output.height = height;
+                resetSession();
+                $("dimensions").textContent = `Kalibrierung für ${width} × ${height} Bildpixel.`;
+            }
+            if (!ready || performance.now() - lastAnalysis >= 150) {
+                frameContext.drawImage(feed, 0, 0, width, height);
+                if (ready) analyze();
+                else render();
+            }
+        } catch (error) {
+            disconnect();
+            showError("Das Kamerabild konnte nicht gelesen werden: " + error.message);
+            return;
+        }
+    }
+    timer = setTimeout(tick, 60);
+}
+
+function analyze() {
+    const geometry = letterbox(frame.width, frame.height);
+    inputContext.fillStyle = "rgb(114,114,114)";
+    inputContext.fillRect(0, 0, 640, 640);
+    inputContext.drawImage(frame, geometry.left, geometry.top, geometry.scaledWidth, geometry.scaledHeight);
+    const rgba = inputContext.getImageData(0, 0, 640, 640).data;
+    const pixels = new Float32Array(3 * 640 * 640);
+    const plane = 640 * 640;
+    for (let index = 0; index < plane; index++) {
+        pixels[index] = rgba[index * 4] / 255;
+        pixels[index + plane] = rgba[index * 4 + 1] / 255;
+        pixels[index + plane * 2] = rgba[index * 4 + 2] / 255;
+    }
+    busy = true;
+    lastAnalysis = performance.now();
+    pendingTime = (lastAnalysis - sessionStart) / 1000;
+    worker.postMessage({ type: "detect", id: epoch, pixels, geometry, threshold: 0.10 }, [pixels.buffer]);
+}
+
+function render() {
+    context.drawImage(frame, 0, 0);
+    if ($("heat-enabled").checked) {
+        heatmap.draw(context, frame.width, frame.height, Number($("opacity").value));
+    }
+    const displayScale = Math.min(output.clientWidth / output.width, output.clientHeight / output.height) || 1;
+    const fontSize = Math.max(12, Math.round(12 / displayScale));
+    context.font = `600 ${fontSize}px sans-serif`;
+    context.lineWidth = 2 / displayScale;
+    const lineY = Number($("line").value) * output.height;
+    context.strokeStyle = "#ffe751";
+    context.setLineDash([9 / displayScale, 5 / displayScale]);
+    context.beginPath();
+    context.moveTo(0, lineY);
+    context.lineTo(output.width, lineY);
+    context.stroke();
+    context.setLineDash([]);
+    context.fillStyle = "#ffe751";
+    context.fillText(`ZÄHLLINIE · Y=${Number($("line").value).toFixed(2)}`, 9 / displayScale, Math.max(fontSize + 6, lineY - 7 / displayScale));
+
+    for (const track of activeTracks) {
+        const speed = tracker.speed(track);
+        const overLimit = speed !== null && speed > Number($("limit").value);
+        const color = overLimit ? "#ff596d" : track.classId === 3 ? "#66d8ff" : "#ffbd58";
+        context.strokeStyle = color;
+        context.fillStyle = color;
+        const box = track.box;
+        context.strokeRect(box.x1, box.y1, box.x2 - box.x1, box.y2 - box.y1);
+        const history = track.history;
+        context.beginPath();
+        history.forEach((point, index) => {
+            if (index === 0) context.moveTo(point.x, point.y);
+            else context.lineTo(point.x, point.y);
+        });
+        context.stroke();
+        const label = `${VEHICLES[track.classId]} #${track.id} | ${speed === null ? "—" : "~" + speed.toFixed(1)} km/h`;
+        const labelWidth = context.measureText(label).width + 10;
+        const labelHeight = fontSize + 8;
+        const x = Math.max(0, Math.min(box.x1, output.width - labelWidth));
+        const y = Math.max(0, box.y1 - labelHeight);
+        context.fillStyle = "#101b2be6";
+        context.fillRect(x, y, labelWidth, labelHeight);
+        context.fillStyle = color;
+        context.fillText(label, x + 5, y + labelHeight - 5);
+    }
+    $("snapshot").disabled = false;
+}
+
+function updateMetrics() {
+    $("total").textContent = tracker ? tracker.down + tracker.up : 0;
+    $("down").textContent = tracker?.down || 0;
+    $("up").textContent = tracker?.up || 0;
+    $("active").textContent = activeTracks.length;
+    const speeds = tracker ? activeTracks.map(track => tracker.speed(track)).filter(speed => speed !== null && speed >= 2) : [];
+    $("average").textContent = speeds.length ? (speeds.reduce((sum, speed) => sum + speed, 0) / speeds.length).toFixed(1) : "—";
+    $("class-summary").textContent = Object.entries(VEHICLES).map(([id, label]) => `${label} ${tracker?.byClass[id] || 0}`).join(" · ");
+    $("events").replaceChildren();
+    const events = tracker?.events.slice(-8).reverse() || [];
+    if (!events.length) {
+        const row = $("events").insertRow();
+        const cell = row.insertCell();
+        cell.colSpan = 5;
+        cell.textContent = "Noch keine Überquerung erkannt.";
+    }
+    for (const event of events) {
+        const row = $("events").insertRow();
+        const values = [
+            new Date(event.timestamp).toLocaleTimeString("de-DE"), event.vehicle, "#" + event.trackId,
+            event.direction === "down" ? "Abwärts / Ein" : "Aufwärts / Aus",
+            event.estimatedKmh === null ? "—" : "~" + event.estimatedKmh.toFixed(1) + " km/h",
+        ];
+        values.forEach(value => { row.insertCell().textContent = value; });
+    }
+}
+
+worker.onmessage = ({ data }) => {
+    if (data.type === "ready") {
+        ready = true;
+        if (connected) $("status").textContent = "Live-Analyse läuft.";
+        return;
+    }
+    busy = false;
+    if (data.id !== undefined && data.id !== epoch) return;
+    if (data.type === "error") {
+        disconnect();
+        showError("Die Fahrzeugerkennung ist fehlgeschlagen: " + data.message);
+        return;
+    }
+    if (!connected) return;
+    if (!tracker) tracker = createTracker();
+    tracker.metresPerPixel = Number($("scale").value);
+    tracker.confidence = Number($("confidence").value);
+    activeTracks = tracker.update(data.boxes, pendingTime);
+    heatmap.update(activeTracks, pendingTime, frame.width, frame.height);
+    render();
+    updateMetrics();
+    const now = performance.now();
+    $("fps").textContent = lastResult ? (1000 / (now - lastResult)).toFixed(1) : "—";
+    lastResult = now;
+    $("latency").textContent = Math.round(data.milliseconds) + " ms";
+    $("updated").textContent = "Aktualisiert " + new Date().toLocaleTimeString("de-DE");
+};
+
+worker.onerror = () => {
+    busy = false;
+    ready = false;
+    disconnect();
+    showError("Der Erkennungsprozess wurde beendet. Bitte die Seite neu laden.");
+};
+
+$("connect").onclick = connect;
+$("disconnect").onclick = disconnect;
+$("reset").onclick = resetSession;
+$("line").oninput = () => {
+    const value = Number($("line").value);
+    $("line-value").textContent = value.toFixed(2);
+    tracker?.setLine(value);
+    if (frame.width && frame.height && !busy) render();
+};
+$("scale").oninput = () => {
+    const value = Number($("scale").value);
+    $("scale-value").textContent = value.toFixed(3);
+    if (tracker) tracker.metresPerPixel = value;
+    updateMetrics();
+    if (!busy) render();
+};
+$("limit").oninput = () => {
+    $("limit-value").textContent = $("limit").value + " km/h";
+    if (!busy) render();
+};
+$("confidence").oninput = () => {
+    $("confidence-value").textContent = Number($("confidence").value).toFixed(2);
+};
+$("opacity").oninput = () => {
+    $("opacity-value").textContent = Math.round(Number($("opacity").value) * 100) + "%";
+    if (!busy) render();
+};
+$("heat-enabled").onchange = () => { if (!busy) render(); };
+
+function download(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+$("snapshot").onclick = () => output.toBlob(blob => {
+    if (blob) download(blob, "cctv-traffic.png");
+});
+$("csv").onclick = () => {
+    const header = ["timestamp", "elapsed_seconds", "track_id", "vehicle", "direction", "estimated_kmh", "metres_per_pixel", "line_y"];
+    const rows = (tracker?.events || []).map(event => [
+        event.timestamp, event.elapsedSeconds.toFixed(3), event.trackId, event.vehicle,
+        event.direction, event.estimatedKmh?.toFixed(2) || "", event.metresPerPixel, event.lineY,
+    ]);
+    const csv = [header, ...rows].map(row => row.map(value => '"' + String(value).replaceAll('"', '""') + '"').join(",")).join("\r\n");
+    download(new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" }), "cctv-traffic-crossings.csv");
+};
+
+const stage = $("stage");
+function syncFullscreen() {
+    const expanded = Boolean(document.fullscreenElement) || stage.classList.contains("expanded");
+    $("exit-fullscreen").hidden = !expanded;
+}
+async function exitFullscreen() {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    stage.classList.remove("expanded");
+    syncFullscreen();
+}
+$("fullscreen").onclick = async () => {
+    try {
+        await stage.requestFullscreen();
+    } catch {
+        stage.classList.add("expanded");
+    }
+    syncFullscreen();
+};
+$("exit-fullscreen").onclick = exitFullscreen;
+document.addEventListener("fullscreenchange", syncFullscreen);
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && stage.classList.contains("expanded")) exitFullscreen();
+});
+window.addEventListener("pagehide", () => { disconnect(); worker.terminate(); URL.revokeObjectURL(workerUrl); });
+
+worker.postMessage({ type: "load" });
+connect();
+
+</script>
+</body>
+</html>
